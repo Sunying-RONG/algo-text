@@ -9,6 +9,7 @@ Cr�� par S�verine B�rard, modifi� par VOTRE_NOM_ICI
 #include <fstream> //pour lire les fichiers
 #include <string>
 #include <map> //pour les tableaux associatifs
+#include <unordered_set>
 
 using namespace std;
 
@@ -36,7 +37,7 @@ void naif(string P, int m, string T, int n)
 		}
 		pos=pos+1;
 	}
-	cout<<"le nombre de comparaisons de caracteres reellement effectuees, "<<nb<<endl;
+	cout<<"le nombre de comparaisons de caracteres reellement effectuees : "<<nb<<endl;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -92,7 +93,7 @@ void MP(string P, int m, string T, int n)
 		}
 		
 	}
-   	cout<<"le nombre de comparaisons de caracteres reellement effectuees, "<<nb<<endl;
+   	cout<<"le nombre de comparaisons de caracteres reellement effectuees : "<<nb<<endl;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -151,7 +152,7 @@ void KMP(string P, int m, string T, int n)
 			i=KMP_next[i];
 		}
    }
-   cout<<"le nombre de comparaisons de caracteres reellement effectuees, "<<nb<<endl;
+   cout<<"le nombre de comparaisons de caracteres reellement effectuees : "<<nb<<endl;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -159,22 +160,131 @@ void KMP(string P, int m, string T, int n)
 //////////////////////////////////////////////////////////////////////////////
 int * calcule_suff(string P, int m)
 {
-   
+	int * suff = new int [m + 1];
+	suff[m] = m;
+	int g = m;
+	int f;
+	for (int i = m - 1; i >= 1; i--)
+	{
+		if (i > g && suff[i + m - f] != (i - g))
+		{
+			suff[i] = min(suff[i + m - f], i - g);
+		} 
+		else 
+		{
+			f = i;
+			g = min(g, i);
+			while (g > 0 && P[g] == P[g + m - f])
+			{
+				g = g - 1;
+			}
+			suff[i] = f - g;
+		}
+	}
+	// print suff
+	cout<<"tableau suff"<<endl;
+	for (int i = 1; i <= m; i++)
+	{
+		cout<<"suff["<<i<<"] : "<<suff[i]<<endl;
+	}
+	return suff;
 }
 
 int * calcule_D(string P, int m)
 {
-   
+	int * suff = calcule_suff(P, m);
+	int * D = new int [m + 1];
+	// initialisation
+	for (int i = 1; i <= m; i++)
+	{
+		D[i] = m;
+	}
+	// cas 2
+	int i = 1;
+	for (int j = m - 1; j >= 0; j--)
+	{
+		if (j == 0 || suff[j] == j)
+		{
+			while (i <= m - j)
+			{
+				D[i] = m - j;
+				i++;
+			}
+		}
+	}
+	// cas 1
+	for (int j = 1; j <= m - 1; j++)
+	{
+		D[m - suff[j]] = m - j;
+	}
+	// print D
+	cout<<"tableau D"<<endl;
+	for (int i = 1; i <= m; i++)
+	{
+		cout<<"D["<<i<<"] : "<<D[i]<<endl;
+	}
+	return D;
 }
 
-map<char,int> calcule_R(string P, int m)
+map<char,int> calcule_R(string P, int m, unordered_set<char> setT)
 {
-   
+	map<char,int> R;
+	for (char const &c : setT)
+	{
+		R[c]=0;
+	}
+	for (size_t i = 0; i <= m; i++)
+	{
+		R[P[i]]=i;
+	}
+	// print R
+	cout<<"tableau R"<<endl;
+	for (auto const &pair : R)
+	{
+		cout<<pair.first<<" : "<<pair.second<<endl;
+	}
+	return R;
 }
 
 void BM(string P, int m, string T, int n)
 {
-   
+   unordered_set<char> setT;
+   int nb = 0;
+   for (char const &c : T) 
+   {
+	   setT.insert(c);
+   }
+//    for (char const &c : setT)
+//    {
+// 	   cout<<c<<endl;
+//    }
+	map<char,int> R = calcule_R(P,m,setT);
+	int * D = calcule_D(P, m);
+	int pos = 1;
+	int i;
+	while (pos <= n - m + 1)
+	{
+		i = m;
+		while (i > 0 && P[i] == T[pos + i - 1])
+		{
+			i--;
+			nb++;
+		}
+		if (i > 0 && P[i] != T[pos + i - 1])
+		{
+			nb++;
+		}
+		if (i == 0)
+		{
+			cout<<"P apparait a la position "<<pos<<endl;
+			pos = pos + D[1];
+		}
+		else
+		{
+			pos = pos + max(D[i], i - R[T[pos+i-1]]);
+		}
+	}
+	cout<<"le nombre de comparaisons de caracteres reellement effectuees : "<<nb<<endl;
 }
 
 //////////////////////////////////////////////////////////////////////////////
