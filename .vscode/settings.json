@@ -3,6 +3,11 @@
     "files.associations": {
         "*.rmd": "markdown",
         "unordered_set": "cpp",
-        "map": "cpp"
+        "map": "cpp",
+        "list": "cpp",
+        "algorithm": "cpp",
+        "chrono": "cpp",
+        "limits": "cpp",
+        "iostream": "cpp"
     }
 }

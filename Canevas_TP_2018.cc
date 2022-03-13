@@ -10,6 +10,7 @@ Cr�� par S�verine B�rard, modifi� par VOTRE_NOM_ICI
 #include <string>
 #include <map> //pour les tableaux associatifs
 #include <unordered_set>
+#include <vector>
 
 using namespace std;
 
@@ -77,11 +78,11 @@ void MP(string P, int m, string T, int n)
 		{
 			i=MP_next[i];
 			nb++;
-			cout<<"non égale  "<<T[j]<<endl;
+			// cout<<"non égale  "<<T[j]<<endl;
 		}
 		if (i>0 && P[i]==T[j]) {
 			nb++;
-			cout<<"égale  "<<T[j]<<endl;
+			// cout<<"égale  "<<T[j]<<endl;
 		}
 		i=i+1;
 		j=j+1;
@@ -136,12 +137,12 @@ void KMP(string P, int m, string T, int n)
 		{
 			i=KMP_next[i];
 			nb++;
-			cout<<"non égale  "<<T[j]<<endl;
+			// cout<<"non égale  "<<T[j]<<endl;
 		}
 		if (i>0 && P[i]==T[j])
 		{
 			nb++;
-			cout<<"égale  "<<T[j]<<endl;
+			// cout<<"égale  "<<T[j]<<endl;
 		}
 		i++;
 		j++;
@@ -233,7 +234,7 @@ map<char,int> calcule_R(string P, int m, unordered_set<char> setT)
 	{
 		R[c]=0;
 	}
-	for (size_t i = 0; i <= m; i++)
+	for (size_t i = 1; i <= m; i++)
 	{
 		R[P[i]]=i;
 	}
@@ -287,6 +288,85 @@ void BM(string P, int m, string T, int n)
 	cout<<"le nombre de comparaisons de caracteres reellement effectuees : "<<nb<<endl;
 }
 
+// règle du mauvais caractère amélioré
+map<char,vector<int> > calcule_R_ameliore(string P, int m, unordered_set<char> setT)
+{
+	map<char,vector<int> > R_ameliore;
+	for (char const &c : setT)
+	{
+		R_ameliore[c] = vector<int>();
+	}
+	for (size_t i = 1; i <= m; i++)
+	{
+		R_ameliore[P[i]].push_back(i);
+	}
+	// print R ameliore
+	cout<<"tableau R ameliore "<<endl;
+	for (auto const &pair : R_ameliore)
+	{
+		cout<<pair.first<<" : { ";
+		for (auto const &i : pair.second)
+		{
+			cout<<i<<" ";
+		}
+		cout<<"}"<<endl;
+	}
+	return R_ameliore;
+}
+// algo Boyer-Moore recherche phase avec mauvais caractere R ameliore
+void BM_ameliore(string P, int m, string T, int n)
+{
+	cout<<"m = "<<m<<endl;
+	cout<<"P = "<<P<<endl;
+	cout<<"T = "<<T<<endl;
+	unordered_set<char> setT;
+	int nb = 0;
+	for (char const &c : T) 
+	{
+		setT.insert(c);
+	}
+	map<char,vector<int> > R_ameliore = calcule_R_ameliore(P, m, setT);
+	int * D = calcule_D(P, m);
+	int pos = 1;
+	int i;
+	while (pos <= n - m + 1)
+	{
+		i = m;
+		while (i > 0 && P[i] == T[pos + i - 1])
+		{
+			i--;
+			nb++;
+		}
+		if (i > 0 && P[i] != T[pos + i - 1])
+		{
+			nb++;
+		}
+
+		if (i == 0)
+		{
+			cout<<"P apparait a la position "<<pos<<endl;
+			pos = pos + D[1];
+		}
+		else
+		{
+			int decalerR = i;
+			if (R_ameliore[T[pos+i-1]].size() > 0)
+			{
+				for (size_t ri = R_ameliore[T[pos+i-1]].size()-1; ri >= 0; ri--)
+				{
+					if (R_ameliore[T[pos+i-1]][ri] < i) 
+					{
+						decalerR = i - R_ameliore[T[pos+i-1]][ri];
+						break;
+					}
+				}
+			}
+			
+			pos = pos + max(D[i], decalerR);
+		}
+	}
+	cout<<"le nombre de comparaisons de caracteres reellement effectuees : "<<nb<<endl;
+}
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////// main ///////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
@@ -359,6 +439,10 @@ int main(int argc, char** argv)
 
 	  cout<<"************* Recherche avec Boyer-Moore *************"<<endl;
 	  BM(P,m,T,n);
+	  cout<<"################################"<<endl;
+
+	  cout<<"************* Recherche avec Boyer-Moore ameliore *************"<<endl;
+	  BM_ameliore(P,m,T,n);
 	  cout<<"################################"<<endl;
       }
 }
