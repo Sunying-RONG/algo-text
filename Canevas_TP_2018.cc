@@ -367,6 +367,7 @@ void BM_ameliore(string P, int m, string T, int n)
 	}
 	cout<<"le nombre de comparaisons de caracteres reellement effectuees : "<<nb<<endl;
 }
+
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////// main ///////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
@@ -390,7 +391,10 @@ int main(int argc, char** argv)
 	 string P; char c;
 	 //On lit le fichier caract�re par caract�re
 	 while(IfFicMotif.get(c)){
-	    P += c;
+		if (c != '\n') {
+			P += c;
+		}
+	    
 	 }
 	 //On �limine l'�ventuel retour � la ligne en fin de fichier
 	 if (P.size() >1 && (int)P[P.size()-1]==10)
