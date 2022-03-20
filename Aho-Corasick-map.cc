@@ -107,8 +107,9 @@ void BFS(node* root){ // utility function to print the automata
     queue<pair<char, node*> > qu;
     cout <<"\n" <<root <<"\n" <<root ->suffix_link <<"\n" <<root ->output_link <<"\n" <<root ->pattern_ind <<"\n\n";
 
-    for(auto &it : root ->child)
+    for(auto &it : root ->child) {
         qu.push(it);
+    }
 
     while(qu.size()){
         auto temp = qu.front();
@@ -116,8 +117,9 @@ void BFS(node* root){ // utility function to print the automata
 
         cout <<temp.second <<"\n" <<temp.first <<"\n" <<temp.second ->suffix_link <<"\n" <<temp.second ->output_link <<"\n" <<temp.second ->pattern_ind <<"\n\n";
 
-        for(auto &it : temp.second ->child)
+        for(auto &it : temp.second ->child) {
             qu.push(it);
+        }
     }
 }
 

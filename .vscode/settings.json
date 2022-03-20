@@ -35,6 +35,7 @@
         "ranges": "cpp",
         "stdexcept": "cpp",
         "system_error": "cpp",
-        "tuple": "cpp"
+        "tuple": "cpp",
+        "queue": "cpp"
     }
 }
