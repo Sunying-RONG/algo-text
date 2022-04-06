@@ -1,9 +1,9 @@
 /*========================================================================
 Fichier Canevas_TP_2019_ArbreSuf.cc 
-Cours d'algorithmique du texte HMIN121M - Université de Montpellier
-Année 2019-20
+Cours d'algorithmique du texte HMIN121M - Universitï¿½ de Montpellier
+Annï¿½e 2019-20
 
-Créé par Sèverine Bérard, modifié par VOTRE_NOM_ICI
+Crï¿½ï¿½ par Sï¿½verine Bï¿½rard, modifiï¿½ par VOTRE_NOM_ICI
 =========================================================================*/
 #include <iostream>
 #include <fstream> //pour lire les fichiers
@@ -19,9 +19,9 @@ using namespace std;
 
 struct Noeud{
    int id; // un identifiant
-   string etiquette; //l'étiquette de l'arc entrant sur ce noeud
+   string etiquette; //l'ï¿½tiquette de l'arc entrant sur ce noeud
    int numero; // dans le cas des feuilles >0 et 0 pour les noeuds internes 
-   struct Noeud * fils[ALPHABET+1]; //arcs sortant, rangés selon la 1re lettre de l'étiquette
+   struct Noeud * fils[ALPHABET+1]; //arcs sortant, rangï¿½s selon la 1re lettre de l'ï¿½tiquette
 };
 
 struct Noeud * ArbreSuf(string T,int n){
@@ -29,15 +29,79 @@ struct Noeud * ArbreSuf(string T,int n){
 
    int cpt=0;
 
-   //Création d'un premier noeud racine
+   //Crï¿½ation d'un premier noeud racine
    struct Noeud * Racine= new struct Noeud;
-   Racine->id=cpt;cpt++;
+   Racine->id=cpt;
+   cpt++;
    Racine->etiquette="RACINE";
    Racine->numero=0;
-   for(int i=0; i<=ALPHABET;i++) Racine->fils[i]=NULL;
+   for(int i=0; i<=ALPHABET;i++) {
+      Racine->fils[i]=NULL;
+   }
+   //ï¿½ complï¿½ter
+   struct Noeud * N1 = new struct Noeud;
+   N1 -> id = cpt;
+   N1 -> etiquette = T.substr(cpt-1); // "ananas$"
+   N1 -> numero = cpt;
+   for(int i=0; i<=ALPHABET;i++) {
+      N1 -> fils[i] = NULL;
+   }
+   Racine -> fils[int(N1 -> etiquette[0])] = N1;
+   cpt++;
 
-   //À compléter
+   struct Noeud * N2 = new struct Noeud;
+   N2 -> id = cpt;
+   N2 -> etiquette = T.substr(cpt-1); // "nanas$"
+   N2 -> numero = cpt;
+   for(int i=0; i<=ALPHABET;i++) {
+      N2 -> fils[i] = NULL;
+   }
+   Racine -> fils[int(N2 -> etiquette[0])] = N2;
+   cpt++;
+
+   struct Noeud * N3 = new struct Noeud;
+   N3 -> id = cpt;
+   N3 -> etiquette = "ana";
+   N3 -> numero = 0;
+   for(int i=0; i<=ALPHABET;i++) {
+      N3 -> fils[i] = NULL;
+   }
+   Racine -> fils[int(N3 -> etiquette[0])] = N3;
+   cpt++;
+
+   N1->etiquette = "nas$";
+   N3->fils[int(N1->etiquette[0])]=N1;
+
+   struct Noeud * N4 = new struct Noeud;
+   N4 -> id = cpt;
+   N4 -> etiquette = "s$";
+   N4 -> numero = cpt;
+   for(int i=0; i<=ALPHABET;i++) {
+      N4 -> fils[i] = NULL;
+   }
+   N3 -> fils[int(N4->etiquette[0])] = N4;
    
+   cpt++;
+   // struct Noeud * N3 = new struct Noeud;
+   // N3 -> id = cpt;
+   // N3 -> etiquette = T.substr(cpt);
+
+   // for(int i=0; i<=N1->etiquette.length(); i++) {
+   //    if(N3->etiquette[i].compare(N1->etiquette[i]) == 0) {
+
+   //    }
+   // }
+   // N3 -> numero = cpt;
+   // for(int i=0; i<=ALPHABET;i++) {
+   //    N3 -> fils[i] = NULL;
+   // }
+   // Racine -> fils[int(N3 -> etiquette[1])] = N3;
+   // cpt++;
+
+
+
+
+
    return Racine;
 }
    
@@ -58,36 +122,41 @@ int lectureFic(string nomFic, string &S, int &t)
 	 return(0);
       }
    char c;
-   //On lit le fichier caractère par caractère
+   //On lit le fichier caractï¿½re par caractï¿½re
    while(IfFic.get(c)){
 	    S += c;
    }
-   //On élimine l'éventuel retour à la ligne en fin de fichier
+   //On ï¿½limine l'ï¿½ventuel retour ï¿½ la ligne en fin de fichier
    if (S.size() >1 && (int)S[S.size()-1]==10)
       S=S.substr(0,S.size()-1);
    
-   S='#'+S+'$'; //On ajoute le caractère sentinelle à la fin et un caractère # pour que la première lettre soit à la pos 1
+   S=S+'$'; //On ajoute le caractï¿½re sentinelle ï¿½ la fin et un caractï¿½re # pour que la premiï¿½re lettre soit ï¿½ la pos 1
    t=S.size()-1;
    return(1);
 }
 
 void Affichage (struct Noeud * R, int i){
-   for(int k=0;k<i;k++)
+   for(int k=0;k<i;k++) {
       cout<<"\t";
-   if (R->numero==0)
+   }
+   if (R->numero==0) {
       cout<<"Noeud";
-   else
-      cout<<"Feuille n°"<<R->numero;
+   }
+   else {
+      cout<<"Feuille nï¿½"<<R->numero;
+   }
    cout<<" id="<<R->id<<" etiq=|"<<R->etiquette<<"|";
    if (R->numero==0){
       cout<<" de fils :"<<endl;
-      for(int j=0;j<ALPHABET+1;j++)
-	 if (R->fils[j]!=NULL){
-	    for(int k=0;k<=i;k++)
-	       cout<<"\t";
-	    cout<<(char)j<<endl;
-	    Affichage (R->fils[j],i+1);
-	 }
+      for(int j=0;j<ALPHABET+1;j++) {
+         if (R->fils[j]!=NULL){
+            for(int k=0;k<=i;k++) {
+               cout<<"\t";
+            }
+            cout<<(char)j<<endl;
+            Affichage (R->fils[j],i+1);
+         }
+      }
    }
    else cout<<endl;
 }
@@ -111,7 +180,7 @@ string dotRec (struct Noeud * R){
    string dot="";
    stringstream s_id,s_num;
    s_id<<R->id;
-   if (R->numero!=0) //c'est une feuille, on affiche son numéro dans un cercle
+   if (R->numero!=0) //c'est une feuille, on affiche son numï¿½ro dans un cercle
       {
 	 dot+=s_id.str();
 	 dot+=" [label=\"";
@@ -119,7 +188,7 @@ string dotRec (struct Noeud * R){
 	 dot+=s_num.str();
 	 dot+="\", shape=circle, color=blue, fontcolor=black]\n";
       }
-   else //c'est un neoud interne, son label est mis à *
+   else //c'est un neoud interne, son label est mis ï¿½ *
       {
 	 dot+=s_id.str();
 	 dot+=" [label=\"*\", shape=square, color=black, fontcolor=black]\n";
@@ -140,7 +209,7 @@ void Dot (struct Noeud * R, string nom){
    ofstream f (nom_dot.c_str());
    
    if (!f.is_open())
-      cout << "Impossible d'ouvrir le fichier "<<nom_dot<<" en écriture !" << endl;
+      cout << "Impossible d'ouvrir le fichier "<<nom_dot<<" en ï¿½criture !" << endl;
    else
       f << dot << endl;
    f.close();
@@ -161,11 +230,11 @@ int main(int argc, char** argv)
       string nomFicTexte(argv[1]);
       lectureFic(nomFicTexte,T,n);
 
-      /* Création de l'arbre des suffixe */
+      /* Crï¿½ation de l'arbre des suffixe */
       struct Noeud * Racine;
       Racine=ArbreSuf(T,n);
 
-      /* Affichage et création du fichier dot à utiliser : dot -Tpdf monfic.dot -o monfic.pdf*/
+      /* Affichage et crï¿½ation du fichier dot ï¿½ utiliser : dot -Tpdf monfic.dot -o monfic.pdf*/
       Affichage (Racine, 0);
       Dot(Racine, nomFicTexte);
    }

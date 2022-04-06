@@ -1,0 +1,11 @@
+digraph G {
+0 [label="*", shape=square, color=black, fontcolor=black]
+3 [label="*", shape=square, color=black, fontcolor=black]
+1 [label="1", shape=circle, color=blue, fontcolor=black]
+3 -> 1 [label="nas$"]
+4 [label="4", shape=circle, color=blue, fontcolor=black]
+3 -> 4 [label="s$"]
+0 -> 3 [label="ana"]
+2 [label="2", shape=circle, color=blue, fontcolor=black]
+0 -> 2 [label="nanas$"]
+}
